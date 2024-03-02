@@ -85,7 +85,8 @@ class SubjectView(viewsets.ModelViewSet):
         users = CustomUser.objects.filter(subjects__id=subject.id)
 
         for user in users:
-            Grades(user=user, task=task, value=0).save()
+            if user.role != CustomUser.Roles.TEACHER:
+                Grades(user=user, task=task, value=0).save()
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -93,16 +94,17 @@ class SubjectView(viewsets.ModelViewSet):
     @action(detail=True, methods=["PUT"], name="Add new user to subject", url_path="user/(?P<user_id>[^/.]+)")
     def add_user(self, request, pk=None, user_id=None):
         subject = self.get_object()
-        student = CustomUser.objects.get(pk=user_id)
-        student.subjects.add(subject)
+        user = CustomUser.objects.get(pk=user_id)
+        user.subjects.add(subject)
 
         if not is_subject_valid(subject):
             raise SubjectInvalidException
 
         tasks = Task.objects.filter(subject=subject)
         for task in tasks:
-            Grades(user=student, task=task, value=0).save()
-        return Response(UserSerializer(student).data, status=status.HTTP_200_OK)
+            if user.role != CustomUser.Roles.TEACHER:
+                Grades(user=user, task=task, value=0).save()
+        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
 
 
 class GroupView(viewsets.ModelViewSet):
