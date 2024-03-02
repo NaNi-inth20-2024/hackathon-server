@@ -22,6 +22,8 @@ class Subject(models.Model):
     year = models.PositiveIntegerField([MaxValueValidator(MAX_YEAR)])
 
 
+
+
 class Group(models.Model):
     name = models.CharField(max_length=GROUP_NAME_MAX_SIZE)
     year = models.PositiveIntegerField(validators=[MaxValueValidator(MAX_YEAR)])

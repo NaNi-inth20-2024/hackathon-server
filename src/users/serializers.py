@@ -4,7 +4,6 @@ from education.serializers import GroupSerializer
 
 
 class StudentListSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = CustomUser
         fields = ["id", "email", "first_name", "last_name", "group"]

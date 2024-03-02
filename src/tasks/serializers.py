@@ -5,7 +5,7 @@ from tasks.models import Grades, Task
 class GradesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Grades
-        fields = "__all__"
+        fields = ["id", "value", "is_passed"]
 
     def create(self, validated_data):
         user = validated_data.pop("user")
@@ -15,9 +15,11 @@ class GradesSerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Task
         fields = "__all__"
+        read_only_fields = ["is_finished, subject"]
 
     def create(self, validated_data):
         subject = validated_data.pop("subject")
