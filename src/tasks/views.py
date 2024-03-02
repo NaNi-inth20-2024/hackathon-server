@@ -3,7 +3,7 @@ from datetime import datetime
 from rest_framework import viewsets, status, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
+from users.permissions import IsStudentReadOnly, IsTeacher
 from tasks.models import Task, Grades
 from tasks.serializers import GradesSerializer, TaskSerializer
 from tasks.exceptions import TaskIsFinished, GradeIsPassed, TaskIsGraded, TaskIsNotPassed, GradeIncorrect
@@ -12,11 +12,13 @@ from tasks.exceptions import TaskIsFinished, GradeIsPassed, TaskIsGraded, TaskIs
 class GradesView(viewsets.GenericViewSet):
     queryset = Grades.objects.all()
     serializer_class = GradesSerializer
+    permission_classes = [IsStudentReadOnly, IsTeacher]
 
 
 class TaskView(viewsets.GenericViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+    permission_classes = [IsStudentReadOnly, IsTeacher]
 
     @action(detail=True, methods=["PUT"], name="Set grade to task", url_path="grade/(?P<value>[^/.]+)")
     def set_grade(self, pk=None, value=None):
