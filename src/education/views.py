@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
-from education.models import Subject
-from education.serializers import SubjectSerializer
+from education.models import Subject, Group, Discipline
+from education.serializers import SubjectSerializer, GroupSerializer, DisciplineSerializer
 
 
 class SubjectView(viewsets.ModelViewSet):
@@ -14,7 +14,11 @@ class SubjectView(viewsets.ModelViewSet):
         pass
 
 
+class GroupView(viewsets.ModelViewSet):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
 
 
-
-
+class DisciplineView(viewsets.ModelViewSet):
+    queryset = Discipline.objects.all()
+    serializer_class = DisciplineSerializer
