@@ -14,7 +14,7 @@ class CustomUser(AbstractUser):
     username = None
     email = models.EmailField(_("email address"), unique=True)
     first_name = models.CharField(null=True)
-    second_name = models.CharField(null=True)
+    last_name = models.CharField(null=True)
     age = models.PositiveIntegerField(null=True, default=20)
     group = models.ForeignKey(Group, null=True, on_delete=models.CASCADE)
     USERNAME_FIELD = "email"
