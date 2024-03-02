@@ -26,11 +26,14 @@ class RegisterView(generics.CreateAPIView):
             user = serializer.save()
             refresh = RefreshToken.for_user(user)
             user_data = UserSerializer(user).data
-            return Response({
-                'access': str(refresh.access_token),
-                'refresh': str(refresh),
-                'user': user_data
-            }, status=status.HTTP_201_CREATED)
+            return Response(
+                {
+                    "access": str(refresh.access_token),
+                    "refresh": str(refresh),
+                    "user": user_data,
+                },
+                status=status.HTTP_201_CREATED,
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -44,15 +47,11 @@ class CustomTokenObtainPairView(EmailTokenObtainPairView):
         auth_service = AuthService()
         response = super().post(request, *args, **kwargs)
         if response.status_code == status.HTTP_200_OK:
-            access = response.data['access']
-            refresh = response.data['refresh']
+            access = response.data["access"]
+            refresh = response.data["refresh"]
             user = auth_service.token_to_user(access)
             serializer = UserSerializer(user)
-            data = {
-                'access': access,
-                'refresh': refresh,
-                'user': serializer.data
-            }
+            data = {"access": access, "refresh": refresh, "user": serializer.data}
             response.data = data
         return response
 

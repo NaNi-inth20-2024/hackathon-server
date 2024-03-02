@@ -24,8 +24,13 @@ class RegisterSerializer(serializers.ModelSerializer):
         second_name: optional
     """
 
-    email = serializers.EmailField(required=True, validators=[UniqueValidator(queryset=get_user_model().objects.all())])
-    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+    email = serializers.EmailField(
+        required=True,
+        validators=[UniqueValidator(queryset=get_user_model().objects.all())],
+    )
+    password = serializers.CharField(
+        write_only=True, required=True, validators=[validate_password]
+    )
 
     def create(self, validated_data):
         user = get_user_model().objects.create(
@@ -42,7 +47,10 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ("id", "password", "email", "first_name", "last_name")
-        extra_kwargs = {"first_name": {"required": False}, "last_name": {"required": False}}
+        extra_kwargs = {
+            "first_name": {"required": False},
+            "last_name": {"required": False},
+        }
         read_only_fields = ["id"]
 
 

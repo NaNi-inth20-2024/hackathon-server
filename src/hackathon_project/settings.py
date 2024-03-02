@@ -9,7 +9,7 @@ DEBUG = True
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv(os.path.join(BASE_DIR.parent, '.env'))
+load_dotenv(os.path.join(BASE_DIR.parent, ".env"))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
@@ -18,12 +18,7 @@ DOMAIN = os.getenv("DOMAIN")
 SERVER_IP = os.getenv("SERVER_IP")
 SERVER_PORT = os.getenv("SERVER_PORT")
 
-ALLOWED_HOSTS = [
-    f"{SERVER_IP}",
-    "127.0.0.1",
-    "localhost",
-    "20.82.148.177"
-]
+ALLOWED_HOSTS = [f"{SERVER_IP}", "127.0.0.1", "localhost", "20.82.148.177"]
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -67,7 +62,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "django_filters",
     # Own apps
-    'users',
+    "users",
 ]
 
 MIDDLEWARE = [
@@ -87,7 +82,9 @@ ROOT_URLCONF = "hackathon_project.urls"
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 10,
-    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
         "rest_framework.renderers.BrowsableAPIRenderer",

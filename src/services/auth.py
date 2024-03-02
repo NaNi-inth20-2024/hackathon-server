@@ -14,7 +14,7 @@ class AuthService:
         :return: The user object if authentication is successful, None otherwise.
         """
         try:
-            auth_header = headers.get(b'authorization', b'').decode('utf-8')
+            auth_header = headers.get(b"authorization", b"").decode("utf-8")
             jwt_token = auth_header.split()[1]
             return self.token_to_user(jwt_token)
         except Exception:
@@ -24,7 +24,7 @@ class AuthService:
         try:
             access_token = AccessToken(token)
             user_payload = access_token.payload
-            id = user_payload.get('user_id')
+            id = user_payload.get("user_id")
             return get_user_model().objects.get(pk=id)
         except:
             pass
