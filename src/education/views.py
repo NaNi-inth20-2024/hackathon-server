@@ -9,7 +9,7 @@ class SubjectView(viewsets.ModelViewSet):
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
 
-    @action(detail=True, methods=["GET"], name="Submit task", url_path="tasks")
+    @action(detail=True, methods=["GET"], name="Get tasks", url_path="tasks")
     def get_task(self):
         pass
 

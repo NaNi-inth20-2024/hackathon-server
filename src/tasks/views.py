@@ -1,12 +1,14 @@
+from datetime import datetime
+
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from tasks.models import Task, Grades
 from tasks.serializers import GradesSerializer, TaskSerializer
+from users.models import CustomUser
 
 
-# Create your views here.
 class GradesView(viewsets.ModelViewSet):
     queryset = Grades.objects.all()
     serializer_class = GradesSerializer
@@ -16,9 +18,17 @@ class TaskView(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
 
-    # TODO create empty grade to each user who have this task(subj)
     def perform_create(self, serializer):
-        super().perform_create(serializer)
+        task = serializer.validated_data
+        subject = task["subject"]
+        # current_year = datetime.now().year
+        # if subject.year
+        users = CustomUser.objects.filter(subject__id=subject.id)
+        for user in users:
+            Grades(user=user, task=task, value=0)
+        CustomUser.objects.get()
+
+    # TODO create empty grade to each user who have this task(subj)
 
     @action(detail=True, methods=["PUT"], name="Submit task")
     def submit(self, request, pk=None):
