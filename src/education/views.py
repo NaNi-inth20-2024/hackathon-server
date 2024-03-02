@@ -17,7 +17,7 @@ from users.serializers import UserSerializer
 class SubjectView(viewsets.ModelViewSet):
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
-    permission_classes = [IsStudentReadOnly, IsTeacher]
+    permission_classes = [IsStudentReadOnly | IsTeacher]
 
     def list(self, request, *args, **kwargs):
         user = request.user
@@ -56,15 +56,20 @@ class SubjectView(viewsets.ModelViewSet):
     @action(detail=True, methods=["GET"], name="Get tasks", url_path="tasks")
     def get_tasks(self, request, pk=None):
         subject = self.get_object()
+        user = request.user
         tasks = Task.objects.filter(subject=subject)
         serialized_tasks = []
 
-        if not request.user.is_authenticated:
+        if not user.is_authenticated:
             serialized_tasks = TaskSerializer(tasks, many=True).data
             return Response(serialized_tasks)
 
         for task in tasks:
-            grade = Grades.objects.filter(task=task, user=request.user)
+            if user.role == CustomUser.Roles.TEACHER:
+                grade = Grades.objects.filter(is_passed=True, task=task)
+                print(grade)
+            else:
+                grade = Grades.objects.filter(task=task, user=user)
             if not grade:
                 continue
             grade = GradesSerializer(grade[0]).data
@@ -72,6 +77,12 @@ class SubjectView(viewsets.ModelViewSet):
             serialized_task["grade"] = grade
             serialized_tasks.append(serialized_task)
         return Response(serialized_tasks)
+
+    def get_user_tasks(self, user):
+        pass
+
+    def get_teacher_tasks(self, teacher):
+        pass
 
     @action(detail=True, methods=["POST"], name="Create task", url_path="addtask")
     def add_task(self, request, pk=None):
