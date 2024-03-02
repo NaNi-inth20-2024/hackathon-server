@@ -1,8 +1,9 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from tasks.models import Task, Grades
-from serializers import GradesSerializer, TaskSerializer
+from tasks.serializers import GradesSerializer, TaskSerializer
 
 
 # Create your views here.
@@ -14,6 +15,10 @@ class GradesView(viewsets.ModelViewSet):
 class TaskView(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+
+    # TODO create empty grade to each user who have this task(subj)
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
 
     @action(detail=True, methods=["PUT"], name="Submit task")
     def submit(self, request, pk=None):

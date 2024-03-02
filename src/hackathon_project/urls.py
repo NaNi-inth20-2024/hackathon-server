@@ -6,13 +6,15 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
     SpectacularRedocView,
 )
-from hackathon_project import settings
 
+from hackathon_project import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/auth/", include("authentication.urls")),
     # path("api/v1/", include("auction.urls")),
+    path("api/v1/", include("tasks.urls")),
+    path("api/v1/", include("education.urls")),
     path("api/v1/docs/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "api/v1/docs/",

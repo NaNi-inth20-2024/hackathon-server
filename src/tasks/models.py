@@ -21,29 +21,6 @@ class Grades(models.Model):
     value = models.IntegerField()
     is_passed = models.BooleanField(default=False)
 
-# class Auction(models.Model):
-#     title = models.CharField(max_length=MAX_AUCTION_TITLE_LENGTH)
-#     description = models.TextField()
-#     initial_price = models.PositiveIntegerField()
-#     min_bid_price_gap = models.PositiveIntegerField()
-#     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-#     active = models.BooleanField(default=True)
-#     started = models.BooleanField(default=False)
-#     finished = models.BooleanField(default=False)
-#     start_time = models.DateTimeField()
-#     end_time = models.DateTimeField()
-
-
-# class Bid(models.Model):
-#     price = models.PositiveIntegerField()
-#     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-#     auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
-#     created = models.DateTimeField(auto_now_add=True)
-#     won = models.BooleanField(default=False)
-#     leader = models.BooleanField(default=True)
-#
-#     class Meta:
-#         ordering = ["created"]
 
 
 # class Test(models.Model):

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from tasks.models import Grades, Subject
+from tasks.models import Grades, Task
 
 
 class GradesSerializer(serializers.ModelSerializer):
@@ -7,12 +7,22 @@ class GradesSerializer(serializers.ModelSerializer):
         model = Grades
         fields = "__all__"
 
+    def create(self, validated_data):
+        user = validated_data.pop("user")
+        task = validated_data.pop("task")
+        grade = Grades.objects.create(user=user, task=task, **validated_data)
+        return grade
+
 
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Subject
+        model = Task
         fields = "__all__"
 
+    def create(self, validated_data):
+        subject = validated_data.pop("subject")
+        task = Task.objects.create(subject=subject, **validated_data)
+        return task
 
 # class AuctionSerializer(serializers.ModelSerializer):
 #     author = UserSerializer(many=False, read_only=True)
