@@ -16,6 +16,40 @@ class SubjectView(viewsets.ModelViewSet):
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
 
+    def list(self, request, *args, **kwargs):
+        user = request.user
+        subjects = user.subjects.all()
+        subject_teachers = []
+        for subject in subjects:
+            teachers = CustomUser.objects.filter(subjects=subject, role=CustomUser.Roles.TEACHER)
+            teachers = UserSerializer(teachers, many=True).data
+            subject_teachers.append(teachers)
+
+        serializer = self.get_serializer(subjects, many=True)
+
+        data = serializer.data
+        for subject_data in data:
+            subject_data["teachers"] = subject_teachers.pop()
+
+        return Response(data)
+
+    def retrieve(self, request, *args, **kwargs):
+        subject = self.get_object()
+        serializer = self.get_serializer(subject)
+        data = serializer.data
+        teachers = CustomUser.objects.filter(subjects=subject, role=CustomUser.Roles.TEACHER)
+        teachers = UserSerializer(teachers, many=True).data
+        data["teachers"] = teachers
+        return Response(data)
+
+    def create(self, request, *args, **kwargs):
+        teacher = request.user
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        subject = serializer.save()
+        teacher.subjects.add(subject)
+        return Response(serializer.data)
+
     @action(detail=True, methods=["GET"], name="Get tasks", url_path="tasks")
     def get_tasks(self, request, pk=None):
         subject = self.get_object()
@@ -56,10 +90,10 @@ class SubjectView(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    @action(detail=True, methods=["PUT"], name="Add student", url_path="student/(?P<student_id>[^/.]+)")
-    def add_student(self, request, pk=None, student_id=None):
+    @action(detail=True, methods=["PUT"], name="Add new user to subject", url_path="user/(?P<user_id>[^/.]+)")
+    def add_user(self, request, pk=None, user_id=None):
         subject = self.get_object()
-        student = CustomUser.objects.get(pk=student_id)
+        student = CustomUser.objects.get(pk=user_id)
         student.subjects.add(subject)
 
         if not is_subject_valid(subject):
