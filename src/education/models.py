@@ -1,7 +1,4 @@
-from datetime import timezone
-
 from django.db import models
-from users.models import CustomUser
 from django.core.validators import MaxValueValidator
 
 DISCIPLINE_NAME_MAX_SIZE = 150
@@ -21,9 +18,8 @@ class Subject(models.Model):
 
     semester = models.PositiveSmallIntegerField(choices=SEMESTER_CHOICES)
     name = models.CharField(max_length=DISCIPLINE_NAME_MAX_SIZE)
-    discipline = models.ForeignKey(Discipline)
+    discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE)
     year = models.PositiveIntegerField([MaxValueValidator(MAX_YEAR)])
-    users = models.ManyToManyField(CustomUser, null=True)
 
 
 class Group(models.Model):

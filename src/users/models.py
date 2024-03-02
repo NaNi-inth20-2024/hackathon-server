@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from education.models import Group
+from education.models import Group, Subject
 
 from .managers import CustomUserManager
 
@@ -16,10 +16,10 @@ class CustomUser(AbstractUser):
     first_name = models.CharField()
     second_name = models.CharField()
     age = models.PositiveIntegerField()
-    group = models.OneToOneField(Group, null=True)
-
+    group = models.ForeignKey(Group, null=True, on_delete=models.CASCADE)
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
+    subjects = models.ManyToManyField(Subject, null=True)
 
     objects = CustomUserManager()
 
