@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.db import models
 from users.models import CustomUser
 from education.models import Subject
@@ -15,16 +14,12 @@ class Task(models.Model):
     is_finished = models.BooleanField(default=False)
     max_points = models.PositiveIntegerField()
 
+
 class Grades(models.Model):
-    user = models.ForeignKey(CustomUser) #TODO
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)  # TODO
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     value = models.IntegerField()
     is_passed = models.BooleanField(default=False)
-
-
-
-
-
 
 # class Auction(models.Model):
 #     title = models.CharField(max_length=MAX_AUCTION_TITLE_LENGTH)
