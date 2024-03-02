@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from education.exceptions import SubjectInvalidException
 from education.models import Subject, Group, Discipline
@@ -9,12 +10,14 @@ from services.education import is_subject_valid
 from users.models import CustomUser
 from tasks.models import Task, Grades
 from tasks.serializers import TaskSerializer, GradesSerializer
+from users.permissions import IsStudentReadOnly, IsTeacher
 from users.serializers import UserSerializer
 
 
 class SubjectView(viewsets.ModelViewSet):
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
+    permission_classes = [IsStudentReadOnly, IsTeacher]
 
     @action(detail=True, methods=["GET"], name="Get tasks", url_path="tasks")
     def get_tasks(self, request, pk=None):
@@ -74,8 +77,10 @@ class SubjectView(viewsets.ModelViewSet):
 class GroupView(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+    permission_classes = [IsStudentReadOnly, IsTeacher]
 
 
 class DisciplineView(viewsets.ModelViewSet):
     queryset = Discipline.objects.all()
     serializer_class = DisciplineSerializer
+    permission_classes = [IsStudentReadOnly, IsTeacher]

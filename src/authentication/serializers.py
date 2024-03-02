@@ -4,6 +4,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+from users.models import CustomUser
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -31,12 +32,22 @@ class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True, required=True, validators=[validate_password]
     )
+    role = serializers.CharField(
+        write_only=True, required=False, default=CustomUser.Roles.STUDENT
+    )
+
+    def validate_role(self, value):
+        valid_roles = [choice[0] for choice in CustomUser.Roles.choices]
+        if value not in valid_roles:
+            raise serializers.ValidationError("Invalid role value.")
+        return value
 
     def create(self, validated_data):
         user = get_user_model().objects.create(
             email=validated_data["email"],
             first_name=validated_data.get("first_name", ""),
             last_name=validated_data.get("last_name", ""),
+            role=validated_data["role"],
         )
 
         user.set_password(validated_data["password"])
@@ -46,10 +57,11 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ("id", "password", "email", "first_name", "last_name")
+        fields = ("id", "password", "email", "first_name", "last_name", "role")
         extra_kwargs = {
             "first_name": {"required": False},
             "last_name": {"required": False},
+            "role": {"required": False}
         }
         read_only_fields = ["id"]
 
