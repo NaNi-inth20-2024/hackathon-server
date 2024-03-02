@@ -14,3 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = "__all__"
+
+
+class UserAssignGroupSerializer(serializers.Serializer):
+    group_id = serializers.IntegerField()
