@@ -13,7 +13,7 @@ class StudentListSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = "__all__"
+        fields = ["id", "last_name", "first_name", "age", "group", "subjects"]
 
 
 class UserAssignGroupSerializer(serializers.Serializer):

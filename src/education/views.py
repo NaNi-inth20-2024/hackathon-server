@@ -1,7 +1,6 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 
 from education.exceptions import SubjectInvalidException
 from education.models import Subject, Group, Discipline
@@ -67,12 +66,11 @@ class SubjectView(viewsets.ModelViewSet):
         for task in tasks:
             if user.role == CustomUser.Roles.TEACHER:
                 grade = Grades.objects.filter(is_passed=True, task=task)
-                print(grade)
             else:
                 grade = Grades.objects.filter(task=task, user=user)
             if not grade:
                 continue
-            grade = GradesSerializer(grade[0]).data
+            grade = GradesSerializer(grade, many=True).data
             serialized_task = TaskSerializer(task).data
             serialized_task["grade"] = grade
             serialized_tasks.append(serialized_task)
