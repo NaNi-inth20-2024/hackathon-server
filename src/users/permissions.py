@@ -4,8 +4,8 @@ from users.models import CustomUser
 
 class IsStudent(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        if request and hasattr(request, "user"):
-            user = request.user
+        user = request.user
+        if user.is_authenticated:
             if user.role == CustomUser.Roles.STUDENT:
                 return True
         return False
@@ -13,8 +13,8 @@ class IsStudent(permissions.BasePermission):
 
 class IsSameStudent(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        if request and hasattr(request, "user"):
-            user = request.user
+        user = request.user
+        if user.is_authenticated:
             if user.role == CustomUser.Roles.STUDENT:
                 if obj.id == user.id:
                     return True
@@ -23,8 +23,8 @@ class IsSameStudent(permissions.BasePermission):
 
 class IsTeacher(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        if request and hasattr(request, "user"):
-            user = request.user
+        user = request.user
+        if user.is_authenticated:
             if user.role == CustomUser.Roles.TEACHER:
                 return True
         return False
@@ -33,8 +33,8 @@ class IsTeacher(permissions.BasePermission):
 class IsStudentReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
-            if request and hasattr(request, "user"):
-                user = request.user
+            user = request.user
+            if user.is_authenticated:
                 if user.role == CustomUser.Roles.STUDENT:
                     return True
         return False
