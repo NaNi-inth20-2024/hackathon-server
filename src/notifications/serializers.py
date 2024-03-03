@@ -17,7 +17,7 @@ class NotificationCreateForGroupSerializer(serializers.ModelSerializer):
 
 
 class NotificationCreateForStudentSerializer(serializers.ModelSerializer):
-    student_id = serializers.IntegerField()
+    user_id = serializers.IntegerField()
 
     class Meta:
         model = Notification

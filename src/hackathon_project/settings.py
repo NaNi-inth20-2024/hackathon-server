@@ -64,7 +64,8 @@ INSTALLED_APPS = [
     # Own apps
     "users",
     "education",
-    "tasks"
+    "tasks",
+    "notifications",
 ]
 
 MIDDLEWARE = [
