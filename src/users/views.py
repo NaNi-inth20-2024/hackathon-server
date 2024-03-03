@@ -6,6 +6,8 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.response import Response
 
+import education.models
+import tasks.models
 from education.models import Group
 from users.filters import StudentFilter
 from users.serializers import StudentListSerializer, UserAssignGroupSerializer
@@ -14,6 +16,8 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from users.permissions import IsStudent, IsSameStudent, IsTeacher
 from users.models import CustomUser
+
+
 # from education.models import Subject
 # from education.serializers import SubjectSerializer
 # from tasks.models import Task, Grades
@@ -94,5 +98,44 @@ class UserView(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["GET"], name="Get all statistic of user")
     def statistic(self, request, pk=None):
+        user = self.get_object()
+        subjects = education.models.Subject.objects.filter(customuser=user)
+        koef = []
+        completed_tasks = 0
+        active_tasks = 0
+        completed_subjects = 0
+        unfinished_subjects = 0
+        for subject in subjects:
+            completed_subject_tasks = 0
+            active_subject_tasks = 0
+            task_arr = tasks.models.Task.objects.filter(subject=subject)
+            for task in task_arr:
+                max = task.max_points
+                grade = tasks.models.Grades.objects.filter(task=task)
+                if not grade:
+                    continue
+                grade = grade[0]
+                if grade.is_passed:
+                    completed_subject_tasks += 1
+                    if grade.value != 0:
+                        koef.append(grade.value / max)
+                else:
+                    active_subject_tasks += 1
 
-        return Response(status=status.HTTP_200_OK)
+            if completed_subject_tasks == active_subject_tasks:
+                completed_subjects += 1
+            else:
+                unfinished_subjects += 1
+            completed_tasks += completed_subject_tasks
+            active_tasks += active_subject_tasks
+
+        data = {
+            "average_grade": (sum(koef) / len(koef)) * 100,
+            "completed_tasks": completed_tasks,
+            "active_tasks": active_tasks,
+            "completed_tasks_ratio": completed_tasks / (completed_tasks + active_tasks),
+            "completed_subjects": completed_subjects,
+            "unfinished_subjects": unfinished_subjects,
+            "completed_subject_ration": completed_subjects / (completed_subjects + unfinished_subjects)
+        }
+        return Response(data=data, status=status.HTTP_200_OK)
