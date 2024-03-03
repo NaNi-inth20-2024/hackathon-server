@@ -96,8 +96,33 @@ class UserView(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = IsStudent | IsTeacher
 
-    @action(detail=True, methods=["GET"], name="Get all statistic of user")
-    def statistic(self, request, pk=None):
+    @action(detail=False, methods=["GET"], name="Get all grades of user relative to subjects", permission_classes=[IsStudent])
+    def grades(self, request):
+        user = request.user
+        subjects = education.models.Subject.objects.filter(customuser=user)
+        res_data = []
+        for subject in subjects:
+            data = education.serializers.SubjectSerializer(subject).data
+            task_arr = tasks.models.Task.objects.filter(subject=subject)
+            subject_grade = 0
+            max_subject_grade = 0
+            for task in task_arr:
+                max_subject_grade += task.max_points
+                grade = tasks.models.Grades.objects.filter(task=task)
+                if not grade:
+                    continue
+                if grade[0] != 0:
+                    subject_grade += grade[0].value
+
+            data["grade"] = {
+                "max": max_subject_grade,
+                "my": subject_grade,
+            }
+            res_data.append(data)
+        return Response(data=res_data)
+
+    @action(detail=True, methods=["GET"], name="Get all statistic of user", permission_classes=[IsStudent])
+    def statistic(self, request):
         user = self.get_object()
         subjects = education.models.Subject.objects.filter(customuser=user)
         koef = []
@@ -136,6 +161,6 @@ class UserView(viewsets.ModelViewSet):
             "completed_tasks_ratio": completed_tasks / (completed_tasks + active_tasks),
             "completed_subjects": completed_subjects,
             "unfinished_subjects": unfinished_subjects,
-            "completed_subject_ration": completed_subjects / (completed_subjects + unfinished_subjects)
+            "completed_subject_ratio": completed_subjects / (completed_subjects + unfinished_subjects)
         }
         return Response(data=data, status=status.HTTP_200_OK)
