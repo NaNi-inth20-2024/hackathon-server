@@ -21,6 +21,18 @@ class IsSameStudent(permissions.BasePermission):
         return False
 
 
+class IsTeacherOrReadOnly(permissions.BasePermission):
+    """
+    Custom permission to only allow teachers to create notifications.
+    """
+    def has_permission(self, request, view):
+        if request.method == 'GET':
+            return request.user.is_authenticated
+        elif request.method == 'POST':
+            return request.user.is_authenticated and request.user.is_teacher
+        return False
+
+
 class IsTeacher(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         user = request.user
