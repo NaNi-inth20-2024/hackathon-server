@@ -121,9 +121,9 @@ class UserView(viewsets.ModelViewSet):
             res_data.append(data)
         return Response(data=res_data)
 
-    @action(detail=True, methods=["GET"], name="Get all statistic of user", permission_classes=[IsStudent])
+    @action(detail=False, methods=["GET"], name="Get all statistic of user", permission_classes=[IsStudent])
     def statistic(self, request):
-        user = self.get_object()
+        user = request.user
         subjects = education.models.Subject.objects.filter(customuser=user)
         koef = []
         completed_tasks = 0
