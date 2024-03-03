@@ -96,7 +96,8 @@ class UserView(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = IsStudent | IsTeacher
 
-    @action(detail=False, methods=["GET"], name="Get all grades of user relative to subjects", permission_classes=[IsStudent])
+    @action(detail=False, methods=["GET"], name="Get all grades of user relative to subjects",
+            permission_classes=[IsStudent])
     def grades(self, request):
         user = request.user
         subjects = education.models.Subject.objects.filter(customuser=user)
@@ -143,7 +144,8 @@ class UserView(viewsets.ModelViewSet):
                 if grade.is_passed:
                     completed_subject_tasks += 1
                     if grade.value != 0:
-                        koef.append(grade.value / max)
+                        if max != 0:
+                            koef.append(grade.value / max)
                 else:
                     active_subject_tasks += 1
 
@@ -153,14 +155,26 @@ class UserView(viewsets.ModelViewSet):
                 unfinished_subjects += 1
             completed_tasks += completed_subject_tasks
             active_tasks += active_subject_tasks
+        try:
+            average_grade = (sum(koef) / len(koef)) * 100,
+        except ZeroDivisionError:
+            average_grade = 0
+        try:
+            completed_tasks_ratio = completed_tasks / (completed_tasks + active_tasks),
+        except ZeroDivisionError:
+            completed_tasks_ratio = 0
+        try:
+            completed_subject_ratio = completed_subjects / (completed_subjects + unfinished_subjects)
+        except ZeroDivisionError:
+            completed_subject_ratio = 0
 
         data = {
-            "average_grade": (sum(koef) / len(koef)) * 100,
+            "average_grade": average_grade,
             "completed_tasks": completed_tasks,
             "active_tasks": active_tasks,
-            "completed_tasks_ratio": completed_tasks / (completed_tasks + active_tasks),
+            "completed_tasks_ratio": completed_tasks_ratio,
             "completed_subjects": completed_subjects,
             "unfinished_subjects": unfinished_subjects,
-            "completed_subject_ratio": completed_subjects / (completed_subjects + unfinished_subjects)
+            "completed_subject_ratio": completed_subject_ratio
         }
         return Response(data=data, status=status.HTTP_200_OK)
