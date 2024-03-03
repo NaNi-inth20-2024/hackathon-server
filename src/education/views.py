@@ -76,11 +76,12 @@ class SubjectView(viewsets.ModelViewSet):
             serialized_tasks.append(serialized_task)
         return Response(serialized_tasks)
 
-    def get_user_tasks(self, user):
-        pass
-
-    def get_teacher_tasks(self, teacher):
-        pass
+    @action(detail=True, methods=["GET"], name="Get users of subject", url_path="users")
+    def subject_tasks(self, request, pk=None):
+        subject = self.get_object()
+        users = CustomUser.objects.filter(subjects=subject)
+        users = UserSerializer(users, many=True).data
+        return Response(users)
 
     @action(detail=True, methods=["POST"], name="Create task", url_path="addtask")
     def add_task(self, request, pk=None):
@@ -103,7 +104,7 @@ class SubjectView(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    @action(detail=True, methods=["PUT"], name="Add new user to subject", url_path="user/(?P<user_id>[^/.]+)")
+    @action(detail=True, methods=["PUT"], name="Add new user to subject", url_path="users/(?P<user_id>[^/.]+)")
     def add_user(self, request, pk=None, user_id=None):
         subject = self.get_object()
         user = CustomUser.objects.get(pk=user_id)
