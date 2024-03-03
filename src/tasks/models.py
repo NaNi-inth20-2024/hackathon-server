@@ -22,31 +22,3 @@ class Grades(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     value = models.IntegerField(validators=[MaxValueValidator(MAX_GRADE)])
     is_passed = models.BooleanField(default=False)
-
-
-
-# class Test(models.Model):
-#     id = ;
-#     name = models.CharField(max_length=1024)
-#     test_start = ;
-#     test_end = ;
-#     subject = models.ForeignKey();
-#     is_finished = ;
-#
-#
-#
-# class TestQuestions(models.Model):
-#     id = ;
-#     test = models.ForeignKey(Test, on_delete=models.CASCADE)
-#     description = ;
-#     max_points = ;
-#
-#
-#
-#
-# class TestAnswers(models.Model):
-#     pass
-#
-#
-# class TestChoises(models.Model):
-#     pass

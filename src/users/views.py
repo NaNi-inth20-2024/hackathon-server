@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework import viewsets, views, status
+from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
@@ -7,12 +8,16 @@ from rest_framework.response import Response
 
 from education.models import Group
 from users.filters import StudentFilter
-from users.serializers import StudentListSerializer, UserSerializer, UserAssignGroupSerializer
+from users.serializers import StudentListSerializer, UserAssignGroupSerializer
 from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from users.permissions import IsStudent, IsSameStudent, IsTeacher
 from users.models import CustomUser
+# from education.models import Subject
+# from education.serializers import SubjectSerializer
+# from tasks.models import Task, Grades
+# from tasks.serializers import TaskSerializer, GradesSerializer
 
 
 class StudentListView(ListAPIView):
@@ -85,9 +90,9 @@ class TeacherListRetrieveView(GenericAPIView, ListModelMixin, RetrieveModelMixin
 
 class UserView(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = IsStudent | IsTeacher
 
+    @action(detail=True, methods=["GET"], name="Get all statistic of user")
+    def statistic(self, request, pk=None):
 
-
-
-
+        return Response(status=status.HTTP_200_OK)

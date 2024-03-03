@@ -3,8 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from education.exceptions import SubjectInvalidException
-from education.models import Subject, Group, Discipline
-from education.serializers import SubjectSerializer, GroupSerializer, DisciplineSerializer
+from education.models import Subject, Group
+from education.serializers import SubjectSerializer, GroupSerializer
 from services.education import is_subject_valid
 from users.models import CustomUser
 from tasks.models import Task, Grades
@@ -123,10 +123,4 @@ class SubjectView(viewsets.ModelViewSet):
 class GroupView(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [IsStudentReadOnly, IsTeacher]
-
-
-class DisciplineView(viewsets.ModelViewSet):
-    queryset = Discipline.objects.all()
-    serializer_class = DisciplineSerializer
     permission_classes = [IsStudentReadOnly, IsTeacher]

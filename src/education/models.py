@@ -6,10 +6,6 @@ GROUP_NAME_MAX_SIZE = 10
 MAX_YEAR = 3000
 
 
-class Discipline(models.Model):
-    name = models.CharField(max_length=DISCIPLINE_NAME_MAX_SIZE)
-
-
 class Subject(models.Model):
     SEMESTER_CHOICES = (
         (1, 'Semester 1'),
@@ -18,10 +14,7 @@ class Subject(models.Model):
 
     semester = models.PositiveSmallIntegerField(choices=SEMESTER_CHOICES)
     name = models.CharField(max_length=DISCIPLINE_NAME_MAX_SIZE)
-    discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE)
     year = models.PositiveIntegerField([MaxValueValidator(MAX_YEAR)])
-
-
 
 
 class Group(models.Model):
