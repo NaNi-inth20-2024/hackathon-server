@@ -51,7 +51,7 @@ class StudentUpdateGroupView(UpdateAPIView):
     serializer_class = UserAssignGroupSerializer
     permission_classes = [IsTeacher]
 
-    def update(self, request, user_id: int, group_id: int):
+    def update(self, request, user_id: int):
         try:
             user = CustomUser.objects.get(pk=user_id)
         except CustomUser.DoesNotExist:
